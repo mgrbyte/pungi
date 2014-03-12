@@ -79,7 +79,7 @@ Enables jedi to run with a specific sys.path when in a virtual environment.")
   (run-hooks (intern (concat (symbol-name major-mode) "-local-vars-hook"))))
 
 (defun pungi--set-jedi-paths-for-detected-environment ()
-  "Sets `jedi:server-args' for the detected environment."
+  "Set `jedi:server-args' for the detected environment."
   (let ((venv (pungi--detect-buffer-venv buffer-file-name))
         (egg-dirs (pungi--detect-buffer-eggs-dirs buffer-file-name)))
     (make-local-variable 'jedi:server-args)
@@ -106,7 +106,7 @@ Enables jedi to run with a specific sys.path when in a virtual environment.")
     buffer-dir))
 
 (defun pungi--detect-buffer-eggs-dirs (path)
-  "Detect if the file pointed to by PATH uses buildout eggs."
+  "Detect if the file pointed to by PATH use buildout eggs."
   (let ((buffer-dir (file-name-directory path)))
     (while (and (not (file-exists-p
                       (concat buffer-dir "eggs")))
