@@ -1,9 +1,11 @@
-;;; pungi.el --- buildout and virtualenv integration with jedi for Python.
+;;; pungi.el --- Integrates jedi with virtualenv and buildout python environments
 
 ;; Copyright (C) 2014  Matthew Russell
 
 ;; Author: Matthew Russell <matthew.russell@horizon5.org>
+;; Version: 0.2
 ;; Keywords: convenience
+;; Package-Requires: ((jedi "0.2.0alpha1"))
 
 ;; This program is free software; you can redistribute it and/or modify
 ;; it under the terms of the GNU General Public License as published by
@@ -23,7 +25,7 @@
 ;; When working within a virtualenv, configure python sys.path passed
 ;; to `jedi:server-args' such jedi commands `jedi:complete',
 ;; `jedi:goto-definition' and `jedi:doc' show the correct sources.
-;; 
+;;
 ;; Installation:
 ;; (add-to-list 'load-path  'path-to-this-file)
 ;; (require 'pungi)
@@ -33,32 +35,29 @@
 ;;   entering a project that uses buildout or virtualenv,
 ;;   and checking that `jedi:goto-definition' works when you execute
 ;;   the command on symbol in a python buffer.
-;; 
+;;
 ;;; Code:
-(define-package "pungi" "0.2"
-  "Integrates jedi with virtualenv and buildout python environments."
-  '((jedi "20140310.2333")))
 
-(when (equal (require 'python-mode nil :noerr) nil)
+(unless (require 'python-mode nil :noerr)
   (require 'python))
 (require 'jedi)
 
 (defvar pungi-local-variables-hook nil
-  "Hook to be set when `hack-local-variables-hook' is run that enables
-   jedi to run with a specific sys.path when in a virtual environment.")
+  "Hook to be set when `hack-local-variables-hook' is run.
+Enables jedi to run with a specific sys.path when in a virtual environment.")
 
-(defvar pungi-additional-paths nil 
+(defvar pungi-additional-paths nil
   "Addtional paths that will be set if a virtualenv is detected.")
 
 (defun pungi--setup-jedi-maybe ()
-  "setup jedi if it is installed."
+  "Setup jedi if it is installed."
   (when (require 'jedi nil t)
     (jedi:setup)))
 
-(add-hook 'hack-local-variables-hook 
-	  '(lambda ()
-	     (when (not (eq (pungi-local-variables-hook nil) nil))
-	       (pungi--run-local-vars-hook-for-major-mode))))
+(add-hook 'hack-local-variables-hook
+          '(lambda ()
+             (when pungi-local-variables-hook
+               (pungi--run-local-vars-hook-for-major-mode))))
 
 (defun pungi--run-local-vars-hook-for-major-mode ()
   "Run a hook for the major-mode after the local variables have been processed."
@@ -66,9 +65,8 @@
 
 (defun pungi--set-jedi-paths-for-detected-environment ()
   "Sets `jedi:server-args' for the detected environment."
-  (let
-      ((venv (pungi--detect-buffer-venv buffer-file-name))
-       (egg-dirs (pungi--detect-buffer-eggs-dirs buffer-file-name)))
+  (let ((venv (pungi--detect-buffer-venv buffer-file-name))
+        (egg-dirs (pungi--detect-buffer-eggs-dirs buffer-file-name)))
     (make-local-variable 'jedi:server-args)
     (when venv
       (set 'jedi:server-args (list "--virtual-env" venv)))
@@ -81,7 +79,7 @@
       (set 'jedi:server-args (append jedi:server-args (list "--sys-path" path))))))
 
 (defun pungi--detect-buffer-venv (path)
-  "Detect a python virtualenv from the given path."
+  "Detect a python virtualenv from the given PATH."
   (let ((buffer-dir (file-name-directory path)))
     (while (and (not (file-exists-p
                       (concat buffer-dir "bin/activate")))
@@ -93,7 +91,7 @@
     buffer-dir))
 
 (defun pungi--detect-buffer-eggs-dirs (path)
-  "Detect if the file point to by path uses buildout eggs."  
+  "Detect if the file pointed to by PATH uses buildout eggs."
   (let ((buffer-dir (file-name-directory path)))
     (while (and (not (file-exists-p
                       (concat buffer-dir "eggs")))
@@ -101,7 +99,7 @@
       (setq buffer-dir
         (if (equal buffer-dir "/")
             nil
-	  (file-name-directory (directory-file-name buffer-dir)))))
+          (file-name-directory (directory-file-name buffer-dir)))))
     (if buffer-dir
         (directory-files (concat buffer-dir "eggs") t ".\.egg")
         nil)))
