@@ -19,7 +19,7 @@
 
 ;; You should have received a copy of the GNU General Public License
 ;; along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
+;;
 ;;; Commentary:
 ;; This package provides integration with jedi virtualenv and buildout.
 ;; When working within a virtualenv, configure python sys.path passed
@@ -27,15 +27,30 @@
 ;; `jedi:goto-definition' and `jedi:doc' show the correct sources.
 ;;
 ;; Installation:
-;; (add-to-list 'load-path  'path-to-this-file)
+;; If not using ELPA (i.e list-packages), then add the following to
+;; you init.el/.emacs:
+;;
+;; (add-to-list 'load-path 'path-to-this-file)
 ;; (require 'pungi)
 ;;
 ;; Usage:
-;;   The are no user-facing features, but you can test it works by
-;;   entering a project that uses buildout or virtualenv,
-;;   and checking that `jedi:goto-definition' works when you execute
-;;   the command on symbol in a python buffer.
+;;   When you'd like project specific variables to be taken into account,
+;;   e.g python-mode specific changes, you can place a file at the root
+;;   of the project directory called .dir_locals.el, in which
+;;   you can set variables on a per-mode, or global basis.
+;;   See http://www.gnu.org/software/emacs/manual/html_node/emacs/Directory-Variables.html
+;;   for documentation.
+;;   Set the `pungi-local-variables-hook' to a non-nil value in order
+;;   for jedi:setup to take those settings into account.
 ;;
+;;   If jedi has been required, then jedi:setup will be triggered when
+;;   python-mode-hook is fired.
+;;
+;; Testing:
+;;   When visiting a python buffer, move the cursor over a symbol
+;;   and check that invoking M-x `jedi:goto-definition' opens a
+;;   new buffer showing the source of that python symbol.
+;; 
 ;;; Code:
 
 (unless (require 'python-mode nil :noerr)
@@ -52,7 +67,7 @@ Enables jedi to run with a specific sys.path when in a virtual environment.")
 (defun pungi--setup-jedi-maybe ()
   "Setup jedi if it is installed."
   (when (require 'jedi nil t)
-    (jedi:setup)))
+      (jedi:setup)))
 
 (add-hook 'hack-local-variables-hook
           '(lambda ()
@@ -60,7 +75,7 @@ Enables jedi to run with a specific sys.path when in a virtual environment.")
                (pungi--run-local-vars-hook-for-major-mode))))
 
 (defun pungi--run-local-vars-hook-for-major-mode ()
-  "Run a hook for the major-mode after the local variables have been processed."
+  "Run a hook for the `major-mode' after the local variables have been processed."
   (run-hooks (intern (concat (symbol-name major-mode) "-local-vars-hook"))))
 
 (defun pungi--set-jedi-paths-for-detected-environment ()
@@ -112,6 +127,8 @@ Enables jedi to run with a specific sys.path when in a virtual environment.")
 (add-hook 'python-mode-local-vars-hook 'pungi--setup-jedi-extra-args--maybe)
 (add-hook 'python-mode-local-vars-hook 'pungi--setup-jedi-maybe)
 (add-hook 'python-mode-hook 'pungi--setup-jedi-maybe)
+
+(setq-default pungi-local-variables-hook 'pungi--run-local-vars-hook-for-major-mode)
 
 (provide 'pungi)
 ;;; pungi.el ends here

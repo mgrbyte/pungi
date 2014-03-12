@@ -1,16 +1,14 @@
 PACKAGE = pungi
 EMACS = $(shell which emacs)
 VERSION = $(shell cask version)
-DIST_FILES = pungi.el ${PACKAGE}-pkg.el
+DIST_FILES = pungi.el
 DIST_DIR = dist/${PACKAGE}-${VERSION}
 PACKAGE_DIR = $(cask package-directory)
 
 clean:
-	rm -f "${PACKAGE}-pkg.el"
 	rm -rf dist/${PACKAGE}-${VERSION}
 
 dist-clean:
-	rm -f "${PACKAGE}-pkg.el"
 	rm -rf dist
 
 dist/${PACAKGE}-${VERSION}.tar: ${PACKAGE}-${VERSION}.tar
@@ -25,7 +23,6 @@ ${PACKAGE}-${VERSION}: dist/${PACKAGE}-${VERSION}
 
 dist/${PACKAGE}-${VERSION}:
 	mkdir -p $@
-	cask package
 	cp -v ${DIST_FILES} $@
 
 install:
