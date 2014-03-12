@@ -1,3 +1,3 @@
-(define-package "pungi" "0.1"
-  "A charming Python developement environment"
-  '((python-mode "") (jedi "") (pretty-symbols "") (flymake-python-pyflakes "")))
+(define-package "pungi" "0.2"
+  "Integrates jedi with virtualenv and buildout python environments."
+  '((jedi "20140310.2333")))
