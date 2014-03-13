@@ -5,7 +5,7 @@
 ;; Author: Matthew Russell <matthew.russell@horizon5.org>
 ;; Version: 0.3
 ;; Keywords: convenience
-;; Package-Requires: ((jedi "0.2.0alpha1"))
+;; Package-Requires: ((jedi "20140310.2333"))
 
 ;; This program is free software; you can redistribute it and/or modify
 ;; it under the terms of the GNU General Public License as published by
