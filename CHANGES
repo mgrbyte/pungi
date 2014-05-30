@@ -2,7 +2,11 @@
 Changelog
 =========
 
-0.5 (2014-05-30)
+0.7 (2014-05-30)
+================
+ - jedi:server-args was set to the wrong thing when omelette detected.
+
+0.6 (2014-05-30)
 ================
  - Really fix bug that caused deferred error wrong type stringp.
 

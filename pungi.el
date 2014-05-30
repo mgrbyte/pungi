@@ -3,7 +3,7 @@
 ;; Copyright (C) 2014  Matthew Russell
 
 ;; Author: Matthew Russell <matthew.russell@horizon5.org>
-;; Version: 0.6
+;; Version: 0.7
 ;; Keywords: convenience
 ;; Package-Requires: ((jedi "0.2.0alpha2"))
 
@@ -102,7 +102,9 @@ Enables jedi to run with a specific sys.path when in a virtual environment.")
             (if (equal buffer-dir "/")
                 nil
               (file-name-directory (directory-file-name buffer-dir)))))
-    buffer-dir))
+    (if buffer-dir
+	(directory-files (concat buffer-dir "omelette"))
+      	nil)))
 
 (defun pungi--detect-buffer-omelette (path)
   "Detect if the file pointed to by PATH use buildout omelette."
