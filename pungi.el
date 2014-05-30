@@ -81,14 +81,12 @@ Enables jedi to run with a specific sys.path when in a virtual environment.")
 (defun pungi--set-jedi-paths-for-detected-environment ()
   "Set `jedi:server-args' for the detected environment."
   (let ((venv (pungi--detect-buffer-venv buffer-file-name))
-	(omelette (pungi--detect-buffer-omelette buffer-file-name))
-        (egg-dirs (pungi--detect-buffer-eggs-dirs buffer-file-name)))
+	(omelette (pungi--detect-buffer-omelette buffer-file-name)))
     (make-local-variable 'jedi:server-args)
     (when venv
       (set 'jedi:server-args (list "--virtual-env" venv)))
-    (when egg-dirs
-      (dolist (egg egg-dirs)
-        (set 'jedi:server-args (append jedi:server-args (list "--sys-path" egg))))))
+    (when omelette
+      (set 'jedi:server-args (append jedi:server-args (list "--sys-path" omelette)))))
   (make-local-variable 'pungi-additional-paths)
   (when pungi-additional-paths
     (dolist (path pungi-additional-paths)
@@ -105,20 +103,6 @@ Enables jedi to run with a specific sys.path when in a virtual environment.")
                 nil
               (file-name-directory (directory-file-name buffer-dir)))))
     buffer-dir))
-
-(defun pungi--detect-buffer-eggs-dirs (path)
-  "Detect if the file pointed to by PATH use buildout eggs."
-  (let ((buffer-dir (file-name-directory path)))
-    (while (and (not (file-exists-p
-                      (concat buffer-dir "eggs")))
-                buffer-dir)
-      (setq buffer-dir
-        (if (equal buffer-dir "/")
-            nil
-          (file-name-directory (directory-file-name buffer-dir)))))
-    (if buffer-dir
-        (directory-files (concat buffer-dir "eggs") t ".\.egg")
-        nil)))
 
 (defun pungi--detect-buffer-omelette (path)
   "Detect if the file pointed to by PATH use buildout omelette."
