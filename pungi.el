@@ -116,9 +116,7 @@ Enables jedi to run with a specific sys.path when in a virtual environment.")
         (if (equal buffer-dir "/")
             nil
           (file-name-directory (directory-file-name buffer-dir)))))
-    (if buffer-dir
-        (directory-files (concat buffer-dir "omelette"))
-        nil)))
+   buffer-dir))
 
 (defun pungi--setup-jedi-extra-args--maybe ()
   "Configure jedi server's extra arguments."
