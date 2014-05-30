@@ -3,7 +3,7 @@
 ;; Copyright (C) 2014  Matthew Russell
 
 ;; Author: Matthew Russell <matthew.russell@horizon5.org>
-;; Version: 0.8
+;; Version: 0.9
 ;; Keywords: convenience
 ;; Package-Requires: ((jedi "0.2.0alpha2"))
 
@@ -92,33 +92,28 @@ Enables jedi to run with a specific sys.path when in a virtual environment.")
     (dolist (path pungi-additional-paths)
       (set 'jedi:server-args (append jedi:server-args (list "--sys-path" path))))))
 
+(defun pungi--find-directory-container-from-path (directory path)
+  "Find a DIRECTORY located in a subdirectory of given PATH."
+  (let ((buffer-dir (file-name-directory path)))
+    (message (format "Initially buffer-dir is %s" buffer-dir))
+    (while (and (not (file-exists-p
+		      (concat buffer-dir directory)))
+		buffer-dir)
+      (message (format "Before: %s" buffer-dir))
+      (setq buffer-dir
+	    (if (equal buffer-dir "/")
+		nil
+	      (file-name-directory (directory-file-name buffer-dir))))
+      (message (format "After: %s" buffer-dir)))
+    buffer-dir))
+
 (defun pungi--detect-buffer-venv (path)
   "Detect a python virtualenv from the given PATH."
-  (let ((buffer-dir (file-name-directory path)))
-    (while (and (not (file-exists-p
-                      (concat buffer-dir "bin/activate")))
-                buffer-dir)
-      (setq buffer-dir
-            (if (equal buffer-dir "/")
-                nil
-              (file-name-directory (directory-file-name buffer-dir)))))
-    (if buffer-dir
-	(directory-files (concat buffer-dir "omelette"))
-      	nil)))
+  (pungi--find-directory-container-from-path "bin/activate" path))
 
 (defun pungi--detect-buffer-omelette (path)
   "Detect if the file pointed to by PATH use buildout omelette."
-  (let ((buffer-dir (file-name-directory path)))
-    (while (and
-	    (not
-	     (or (file-exists-p (concat buffer-dir "omelette"))
-		 (file-exists-p (concat buffer-dir "parts/omelette"))))
-                buffer-dir)
-      (setq buffer-dir
-        (if (equal buffer-dir "/")
-            nil
-          (file-name-directory (directory-file-name buffer-dir)))))
-   buffer-dir))
+  (concat (pungi--find-directory-container-from-path "omelette" path) "omelette"))
 
 (defun pungi--setup-jedi-extra-args--maybe ()
   "Configure jedi server's extra arguments."
