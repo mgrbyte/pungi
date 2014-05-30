@@ -3,7 +3,7 @@
 ;; Copyright (C) 2014  Matthew Russell
 
 ;; Author: Matthew Russell <matthew.russell@horizon5.org>
-;; Version: 0.7
+;; Version: 0.8
 ;; Keywords: convenience
 ;; Package-Requires: ((jedi "0.2.0alpha2"))
 
@@ -86,7 +86,7 @@ Enables jedi to run with a specific sys.path when in a virtual environment.")
     (when venv
       (set 'jedi:server-args (list "--virtual-env" venv)))
     (when omelette
-      (set 'jedi:server-args (list "--sys-path" omelette))))
+      (set 'jedi:server-args (append jedi:server-args (list "--sys-path" omelette)))))
   (make-local-variable 'pungi-additional-paths)
   (when pungi-additional-paths
     (dolist (path pungi-additional-paths)

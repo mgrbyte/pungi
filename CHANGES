@@ -2,6 +2,10 @@
 Changelog
 =========
 
+0.8 (2014-05-30)
+================
+ - Fix a bug with the formatting of jedi:server-args when omlette detected.
+
 0.7 (2014-05-30)
 ================
  - jedi:server-args was set to the wrong thing when omelette detected.
