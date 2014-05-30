@@ -3,9 +3,9 @@
 ;; Copyright (C) 2014  Matthew Russell
 
 ;; Author: Matthew Russell <matthew.russell@horizon5.org>
-;; Version: 0.3
+;; Version: 0.4
 ;; Keywords: convenience
-;; Package-Requires: ((jedi "20140310.2333"))
+;; Package-Requires: ((jedi "0.2.0alpha2"))
 
 ;; This program is free software; you can redistribute it and/or modify
 ;; it under the terms of the GNU General Public License as published by
