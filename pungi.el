@@ -86,7 +86,7 @@ Enables jedi to run with a specific sys.path when in a virtual environment.")
     (when venv
       (set 'jedi:server-args (list "--virtual-env" venv)))
     (when omelette
-      (set 'jedi:server-args (append jedi:server-args (list "--sys-path" omelette)))))
+      (set 'jedi:server-args (list "--sys-path" omelette))))
   (make-local-variable 'pungi-additional-paths)
   (when pungi-additional-paths
     (dolist (path pungi-additional-paths)
