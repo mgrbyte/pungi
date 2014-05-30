@@ -4,7 +4,11 @@ Changelog
 
 0.5 (2014-05-30)
 ================
- - Fix bug that caued deferred error wrong type stringp.
+ - Really fix bug that caused deferred error wrong type stringp.
+
+0.5 (2014-05-30)
+================
+ - Fix bug that caused deferred error wrong type stringp.
 
 0.4 (2014-05-30)
 ================
