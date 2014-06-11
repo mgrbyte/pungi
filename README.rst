@@ -10,7 +10,7 @@ The primary features provided are:
  * Integration with jedi_, in particular enabling jedi:goto-definition to
    work with the Python environment.
 
- * Integration with buildout based projects (e.g in Plone_, Zope_)
+ * Integration with buildout_ based projects (e.g in Plone_, Zope_)
 
  * Integration with virtualenv_
 
@@ -34,7 +34,3 @@ This package can be installed via the ``list-packages`` interface in Emacs.
 .. _jedi: http://jedi.jedidjah.ch/en/latest/
 .. _python-mode: https://github.com/fgallina/python.el
 .. _virtualenv: https://virtualenv.pypa.io/en/latest/
-
-
-
-

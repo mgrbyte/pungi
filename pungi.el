@@ -3,7 +3,7 @@
 ;; Copyright (C) 2014  Matthew Russell
 
 ;; Author: Matthew Russell <matthew.russell@horizon5.org>
-;; Version: 0.9
+;; Version: 0.9.1
 ;; Keywords: convenience
 ;; Package-Requires: ((jedi "0.2.0alpha2"))
 
@@ -50,7 +50,7 @@
 ;;   When visiting a python buffer, move the cursor over a symbol
 ;;   and check that invoking M-x `jedi:goto-definition' opens a
 ;;   new buffer showing the source of that python symbol.
-;; 
+;;
 ;;; Code:
 
 (unless (require 'python-mode nil :noerr)
@@ -83,6 +83,7 @@ Enables jedi to run with a specific sys.path when in a virtual environment.")
   (let ((venv (pungi--detect-buffer-venv buffer-file-name))
 	(omelette (pungi--detect-buffer-omelette buffer-file-name)))
     (make-local-variable 'jedi:server-args)
+    (message (format "OMELETTE?: %s" omelette))
     (when venv
       (set 'jedi:server-args (list "--virtual-env" venv)))
     (when omelette
@@ -113,7 +114,11 @@ Enables jedi to run with a specific sys.path when in a virtual environment.")
 
 (defun pungi--detect-buffer-omelette (path)
   "Detect if the file pointed to by PATH use buildout omelette."
-  (concat (pungi--find-directory-container-from-path "omelette" path) "omelette"))
+    (let ((parent-dir (pungi--find-directory-container-from-path "omelette" path)))
+	(if (not parent-dir)
+	    (setq parent-dir
+		(concat (pungi--find-directory-container-from-path "parts" path) "parts/")))
+	(concat parent-dir "omelette")))
 
 (defun pungi--setup-jedi-extra-args--maybe ()
   "Configure jedi server's extra arguments."

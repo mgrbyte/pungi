@@ -2,6 +2,10 @@
 Changelog
 =========
 
+0.9.1 (2014-06-11)
+==================
+ - Fixes #5 (support default omelette path in buildout <buildout-dir>/parts/omelette)
+
 0.9 (2014-05-30)
 ================
  - Manually tested fixes for the jedi:server-args problem.
@@ -29,4 +33,3 @@ Changelog
 0.1 (2014-03-11)
 ================
  - Initial version
-
