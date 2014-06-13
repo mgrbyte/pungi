@@ -102,7 +102,7 @@ Enables jedi to run with a specific sys.path when in a virtual environment.")
 	    (if (equal buffer-dir "/")
 		nil
 	      (file-name-directory (directory-file-name buffer-dir))))
-    buffer-dir))
+    buffer-dir)))
 
 (defun pungi--detect-buffer-venv (path)
   "Detect a python virtualenv from the given PATH."
