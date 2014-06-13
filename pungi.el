@@ -3,7 +3,7 @@
 ;; Copyright (C) 2014  Matthew Russell
 
 ;; Author: Matthew Russell <matthew.russell@horizon5.org>
-;; Version: 0.9.1
+;; Version: 0.9.2
 ;; Keywords: convenience
 ;; Package-Requires: ((jedi "0.2.0alpha2"))
 
@@ -83,7 +83,6 @@ Enables jedi to run with a specific sys.path when in a virtual environment.")
   (let ((venv (pungi--detect-buffer-venv buffer-file-name))
 	(omelette (pungi--detect-buffer-omelette buffer-file-name)))
     (make-local-variable 'jedi:server-args)
-    (message (format "OMELETTE?: %s" omelette))
     (when venv
       (set 'jedi:server-args (list "--virtual-env" venv)))
     (when omelette
@@ -96,16 +95,13 @@ Enables jedi to run with a specific sys.path when in a virtual environment.")
 (defun pungi--find-directory-container-from-path (directory path)
   "Find a DIRECTORY located in a subdirectory of given PATH."
   (let ((buffer-dir (file-name-directory path)))
-    (message (format "Initially buffer-dir is %s" buffer-dir))
     (while (and (not (file-exists-p
 		      (concat buffer-dir directory)))
 		buffer-dir)
-      (message (format "Before: %s" buffer-dir))
       (setq buffer-dir
 	    (if (equal buffer-dir "/")
 		nil
 	      (file-name-directory (directory-file-name buffer-dir))))
-      (message (format "After: %s" buffer-dir)))
     buffer-dir))
 
 (defun pungi--detect-buffer-venv (path)
