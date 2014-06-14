@@ -67,7 +67,7 @@ Enables jedi to run with a specific sys.path when in a virtual environment.")
 (defun pungi--setup-jedi-maybe ()
   "Setup jedi if it is installed."
   (when (require 'jedi nil t)
-      (jedi:setup)))
+    (jedi:setup)))
 
 (add-hook 'hack-local-variables-hook
           '(lambda ()
@@ -81,7 +81,7 @@ Enables jedi to run with a specific sys.path when in a virtual environment.")
 (defun pungi--set-jedi-paths-for-detected-environment ()
   "Set `jedi:server-args' for the detected environment."
   (let ((venv (pungi--detect-buffer-venv buffer-file-name))
-	(omelette (pungi--detect-buffer-omelette buffer-file-name)))
+        (omelette (pungi--detect-buffer-omelette buffer-file-name)))
     (make-local-variable 'jedi:server-args)
     (when venv
       (set 'jedi:server-args (list "--virtual-env" venv)))
@@ -96,13 +96,13 @@ Enables jedi to run with a specific sys.path when in a virtual environment.")
   "Find a DIRECTORY located in a subdirectory of given PATH."
   (let ((buffer-dir (file-name-directory path)))
     (while (and (not (file-exists-p
-		      (concat buffer-dir directory)))
-		buffer-dir)
+                      (concat buffer-dir directory)))
+                buffer-dir)
       (setq buffer-dir
-	    (if (equal buffer-dir "/")
-		nil
-	      (file-name-directory (directory-file-name buffer-dir))))
-    buffer-dir)))
+            (if (equal buffer-dir "/")
+                nil
+              (file-name-directory (directory-file-name buffer-dir)))))
+    buffer-dir))
 
 (defun pungi--detect-buffer-venv (path)
   "Detect a python virtualenv from the given PATH."
@@ -110,10 +110,10 @@ Enables jedi to run with a specific sys.path when in a virtual environment.")
 
 (defun pungi--detect-buffer-omelette (path)
   "Detect if the file pointed to by PATH use buildout omelette."
-    (let ((parent-dir (pungi--find-directory-container-from-path "omelette" path)))
+  (let ((parent-dir (pungi--find-directory-container-from-path "omelette" path)))
 	(if (not parent-dir)
 	    (setq parent-dir
-		(concat (pungi--find-directory-container-from-path "parts" path) "parts/")))
+              (concat (pungi--find-directory-container-from-path "parts" path) "parts/")))
 	(concat parent-dir "omelette")))
 
 (defun pungi--setup-jedi-extra-args--maybe ()
