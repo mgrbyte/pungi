@@ -3,7 +3,7 @@
 ;; Copyright (C) 2014  Matthew Russell
 
 ;; Author: Matthew Russell <matthew.russell@horizon5.org>
-;; Version: 0.9.3
+;; Version: 0.9.4
 ;; Keywords: convenience
 ;; Package-Requires: ((jedi "0.2.0alpha2"))
 

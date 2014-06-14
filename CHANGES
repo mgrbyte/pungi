@@ -2,6 +2,10 @@
 Changelog
 =========
 
+0.9.4 (2014-06-14)
+==================
+ - Fixes regression introduced by 0.9.3 (Merged pull request from Jimmy Yuen Ho Wong)
+
 0.9.3 (2014-06-13)
 ==================
  - Fixes #6
