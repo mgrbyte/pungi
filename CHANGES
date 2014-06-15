@@ -2,6 +2,10 @@
 Changelog
 =========
 
+0.9.5 (2014-06-15)
+==================
+ - Fixes hook order (Merge pull request #8 from wyuenho/fix-hook-order)
+
 0.9.4 (2014-06-14)
 ==================
  - Fixes regression introduced by 0.9.3 (Merged pull request from Jimmy Yuen Ho Wong)
