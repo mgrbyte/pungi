@@ -36,12 +36,12 @@
 ;; Usage:
 ;;   When you'd like project specific variables to be taken into account,
 ;;   e.g python-mode specific changes, you can place a file at the root
-;;   of the project directory called .dir_locals.el, in which
+;;   of the project directory called .dir-locals.el, in which
 ;;   you can set variables on a per-mode, or global basis.
 ;;   See http://www.gnu.org/software/emacs/manual/html_node/emacs/Directory-Variables.html
 ;;   for documentation.
-;;   Set the `pungi-local-variables-hook' to a non-nil value in order
-;;   for jedi:setup to take those settings into account.
+;;   Set the `pungi-setup-jedi' to a non-nil value in order for `jedi:setup' to
+;;   take those settings into account.
 ;;
 ;;   If jedi has been required, then jedi:setup will be triggered when
 ;;   python-mode-hook is fired.
@@ -57,8 +57,8 @@
   (require 'python))
 (require 'jedi)
 
-(defvar pungi-local-variables-hook nil
-  "Hook to be set when `hack-local-variables-hook' is run.
+(defvar pungi-setup-jedi t
+  "Whether pungi should setup jedi.
 Enables jedi to run with a specific sys.path when in a virtual environment.")
 
 (defvar pungi-additional-paths nil
@@ -66,17 +66,22 @@ Enables jedi to run with a specific sys.path when in a virtual environment.")
 
 (defun pungi--setup-jedi-maybe ()
   "Setup jedi if it is installed."
-  (when (require 'jedi nil t)
-    (jedi:setup)))
+  (when (and (require 'jedi nil t) pungi-setup-jedi)
+    (pungi--set-jedi-paths-for-detected-environment)
+    (jedi:ac-setup)
+    (when jedi:import-python-el-settings
+      ;; This is added to the beginning of `hack-local-variables-hook'
+      ;; internally from `jedi:setup', so it will never be run when
+      ;; `pungi--setup-jedi-maybe' is run as a `hack-local-variables-hook', so
+      ;; the internal of `jedi:setup' must be copyed and pasted here.
+      (jedi:import-python-el-settings-setup))
+    (jedi-mode 1)))
 
-(add-hook 'hack-local-variables-hook
-          '(lambda ()
-             (when pungi-local-variables-hook
-               (pungi--run-local-vars-hook-for-major-mode))))
+(defun pungi--python-mode-hook ()
+  "Hook to setup pungi when python-mode is active."
+  (add-hook 'hack-local-variables-hook 'pungi--setup-jedi-maybe nil t))
 
-(defun pungi--run-local-vars-hook-for-major-mode ()
-  "Run a hook for the `major-mode' after the local variables have been processed."
-  (run-hooks (intern (concat (symbol-name major-mode) "-local-vars-hook"))))
+(add-hook 'python-mode-hook 'pungi--python-mode-hook)
 
 (defun pungi--set-jedi-paths-for-detected-environment ()
   "Set `jedi:server-args' for the detected environment."
@@ -111,21 +116,10 @@ Enables jedi to run with a specific sys.path when in a virtual environment.")
 (defun pungi--detect-buffer-omelette (path)
   "Detect if the file pointed to by PATH use buildout omelette."
   (let ((parent-dir (pungi--find-directory-container-from-path "omelette" path)))
-	(if (not parent-dir)
-	    (setq parent-dir
+    (if (not parent-dir)
+        (setq parent-dir
               (concat (pungi--find-directory-container-from-path "parts" path) "parts/")))
-	(concat parent-dir "omelette")))
-
-(defun pungi--setup-jedi-extra-args--maybe ()
-  "Configure jedi server's extra arguments."
-  (when (require 'jedi nil t)
-    (pungi--set-jedi-paths-for-detected-environment)))
-
-(add-hook 'python-mode-local-vars-hook 'pungi--setup-jedi-extra-args--maybe)
-(add-hook 'python-mode-local-vars-hook 'pungi--setup-jedi-maybe)
-(add-hook 'python-mode-hook 'pungi--setup-jedi-maybe)
-
-(setq-default pungi-local-variables-hook 'pungi--run-local-vars-hook-for-major-mode)
+    (concat parent-dir "omelette")))
 
 (provide 'pungi)
 ;;; pungi.el ends here
