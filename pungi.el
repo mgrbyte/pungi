@@ -3,9 +3,9 @@
 ;; Copyright (C) 2014  Matthew Russell
 
 ;; Author: Matthew Russell <matthew.russell@horizon5.org>
-;; Version: 0.9.6
+;; Version: 0.9.7
 ;; Keywords: convenience
-;; Package-Requires: ((jedi "0.2.0alpha2"))
+;; Package-Requires: ((jedi "0.2.0alpha2") (pyvenv "1.4"))
 
 ;; This program is free software; you can redistribute it and/or modify
 ;; it under the terms of the GNU General Public License as published by
@@ -91,9 +91,9 @@ Enables jedi to run with a specific sys.path when in a virtual environment.")
 	 (omelette (pungi--detect-buffer-omelette buffer-file-name)))
     (make-local-variable 'jedi:server-args)
     (when venv
-      (set 'jedi:server-args (list "--virtual-env" venv)))
+      (setq jedi:server-args (list "--virtual-env" venv)))
     (when omelette
-      (set 'jedi:server-args (append jedi:server-args (list "--sys-path" omelette))))
+      (setq jedi:server-args (append jedi:server-args (list "--sys-path" omelette))))
     (if (not (jedi:server-args))
 	(error
 	 (concat "We're not in a virtualenv or a buildout project it would seem."
