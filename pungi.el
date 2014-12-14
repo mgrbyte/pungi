@@ -3,7 +3,7 @@
 ;; Copyright (C) 2014  Matthew Russell
 
 ;; Author: Matthew Russell <matthew.russell@horizon5.org>
-;; Version: 0.9.5
+;; Version: 0.9.6
 ;; Keywords: convenience
 ;; Package-Requires: ((jedi "0.2.0alpha2"))
 
@@ -55,14 +55,16 @@
 
 (unless (require 'python-mode nil :noerr)
   (require 'python))
+(require 'pyvenv)
 (require 'jedi)
+
 
 (defvar pungi-setup-jedi t
   "Whether pungi should setup jedi.
 Enables jedi to run with a specific sys.path when in a virtual environment.")
 
 (defvar pungi-additional-paths nil
-  "Addtional paths that will be set if a virtualenv is detected.")
+  "Addtional paths that will be set independantly of the environment detected.")
 
 (defun pungi--setup-jedi-maybe ()
   "Setup jedi if it is installed."
@@ -78,24 +80,29 @@ Enables jedi to run with a specific sys.path when in a virtual environment.")
     (jedi-mode 1)))
 
 (defun pungi--python-mode-hook ()
-  "Hook to setup pungi when python-mode is active."
+  "Hook to setup pungi when `python-mode` is active."
   (add-hook 'hack-local-variables-hook 'pungi--setup-jedi-maybe nil t))
 
 (add-hook 'python-mode-hook 'pungi--python-mode-hook)
 
 (defun pungi--set-jedi-paths-for-detected-environment ()
   "Set `jedi:server-args' for the detected environment."
-  (let ((venv (pungi--detect-buffer-venv buffer-file-name))
-        (omelette (pungi--detect-buffer-omelette buffer-file-name)))
+  (let* ((venv pyvenv-virtual-env)
+	 (omelette (pungi--detect-buffer-omelette buffer-file-name)))
     (make-local-variable 'jedi:server-args)
     (when venv
       (set 'jedi:server-args (list "--virtual-env" venv)))
     (when omelette
-      (set 'jedi:server-args (append jedi:server-args (list "--sys-path" omelette)))))
-  (make-local-variable 'pungi-additional-paths)
-  (when pungi-additional-paths
-    (dolist (path pungi-additional-paths)
-      (set 'jedi:server-args (append jedi:server-args (list "--sys-path" path))))))
+      (set 'jedi:server-args (append jedi:server-args (list "--sys-path" omelette))))
+    (if (not (jedi:server-args))
+	(error
+	 (concat "We're not in a virtualenv or a buildout project it would seem."
+		 "\n"
+		 "Try calling `pyvenv-workon` or pyenv-activate`\n")))
+    (make-local-variable 'pungi-additional-paths)
+    (when pungi-additional-paths
+      (dolist (path pungi-additional-paths)
+	(set 'jedi:server-args (append jedi:server-args (list "--sys-path" path)))))))
 
 (defun pungi--find-directory-container-from-path (directory path)
   "Find a DIRECTORY located in a subdirectory of given PATH."
@@ -109,12 +116,13 @@ Enables jedi to run with a specific sys.path when in a virtual environment.")
               (file-name-directory (directory-file-name buffer-dir)))))
     buffer-dir))
 
-(defun pungi--detect-buffer-venv (path)
-  "Detect a python virtualenv from the given PATH."
-  (pungi--find-directory-container-from-path "bin/activate" path))
-
 (defun pungi--detect-buffer-omelette (path)
-  "Detect if the file pointed to by PATH use buildout omelette."
+  "Detect if the file pointed to by PATH is in use by buildout.
+
+;;; Commentary:
+buildout recipes usually contain a `part` called `omelette`,
+which is a hierarchy of symlinks,
+generated from the python eggs specified by the buildout configuration."
   (let ((parent-dir (pungi--find-directory-container-from-path "omelette" path)))
     (if (not parent-dir)
         (setq parent-dir

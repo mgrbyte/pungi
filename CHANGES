@@ -2,6 +2,12 @@
 Changelog
 =========
 
+0.9.6 (2014-12-14)
+==================
+- Depend on pyvenv for better/saner virtualenv support.
+  Declare missing dependency on jedi.
+  Corrected documentation string for pungi-additional-paths
+
 0.9.5 (2014-06-15)
 ==================
  - Fixes hook order (Merge pull request #8 from wyuenho/fix-hook-order)
