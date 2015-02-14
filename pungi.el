@@ -3,9 +3,9 @@
 ;; Copyright (C) 2014  Matthew Russell
 
 ;; Author: Matthew Russell <matthew.russell@horizon5.org>
-;; Version: 0.9.7
+;; Version: 0.9.8
 ;; Keywords: convenience
-;; Package-Requires: ((jedi "0.2.0alpha2") (pyvenv "1.4"))
+;; Package-Requires: ((jedi "0.2.0alpha2") (pyvenv "1.5"))
 
 ;; This program is free software; you can redistribute it and/or modify
 ;; it under the terms of the GNU General Public License as published by
@@ -52,9 +52,7 @@
 ;;   new buffer showing the source of that python symbol.
 ;;
 ;;; Code:
-
-(unless (require 'python-mode nil :noerr)
-  (require 'python))
+(require 'python)
 (require 'pyvenv)
 (require 'jedi)
 
@@ -63,25 +61,20 @@
   "Whether pungi should setup jedi.
 Enables jedi to run with a specific sys.path when in a virtual environment.")
 
+(defvar pungi-prefer-buildout t
+  "Whether pungi should prefer buildout over virtualenv when both are detected." )
+
 (defvar pungi-additional-paths nil
   "Addtional paths that will be set independantly of the environment detected.")
 
-(defun pungi--setup-jedi-maybe ()
+(defun pungi:setup-jedi ()
   "Setup jedi if it is installed."
-  (when (and (require 'jedi nil t) pungi-setup-jedi)
-    (pungi--set-jedi-paths-for-detected-environment)
-    (jedi:ac-setup)
-    (when jedi:import-python-el-settings
-      ;; This is added to the beginning of `hack-local-variables-hook'
-      ;; internally from `jedi:setup', so it will never be run when
-      ;; `pungi--setup-jedi-maybe' is run as a `hack-local-variables-hook', so
-      ;; the internal of `jedi:setup' must be copyed and pasted here.
-      (jedi:import-python-el-settings-setup))
-    (jedi-mode 1)))
+  (pungi--set-jedi-paths-for-detected-environment)
+  (jedi:setup))
 
 (defun pungi--python-mode-hook ()
   "Hook to setup pungi when `python-mode` is active."
-  (add-hook 'hack-local-variables-hook 'pungi--setup-jedi-maybe nil t))
+  (add-hook 'python-mode 'pungi--setup-jedi-maybe nil t))
 
 (add-hook 'python-mode-hook 'pungi--python-mode-hook)
 
@@ -89,20 +82,10 @@ Enables jedi to run with a specific sys.path when in a virtual environment.")
   "Set `jedi:server-args' for the detected environment."
   (let* ((venv pyvenv-virtual-env)
 	 (omelette (pungi--detect-buffer-omelette buffer-file-name)))
-    (make-local-variable 'jedi:server-args)
-    (when venv
-      (setq jedi:server-args (list "--virtual-env" venv)))
     (when omelette
-      (setq jedi:server-args (append jedi:server-args (list "--sys-path" omelette))))
-    (if (not (jedi:server-args))
-	(error
-	 (concat "We're not in a virtualenv or a buildout project it would seem."
-		 "\n"
-		 "Try calling `pyvenv-workon` or pyenv-activate`\n")))
-    (make-local-variable 'pungi-additional-paths)
-    (when pungi-additional-paths
-      (dolist (path pungi-additional-paths)
-	(set 'jedi:server-args (append jedi:server-args (list "--sys-path" path)))))))
+      (setq python-shell-extra-pythonpaths (list omelette)))
+    (if (and venv omelette omelette (not pungi-prefer-buildout))
+	(setq python-shell-virtualenv-path venv))))
 
 (defun pungi--find-directory-container-from-path (directory path)
   "Find a DIRECTORY located in a subdirectory of given PATH."

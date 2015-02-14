@@ -2,6 +2,22 @@
 Changelog
 =========
 
+0.9.8 (2015-02-14)
+==================
+- Instead of copying jedi:setup, set the python mode variables
+  `python-shell-extra-pythonpaths` when buildout detected, and 
+  `python-shell-virtualenv-path` when using virtualenv.
+  Startup in a `python-mode-hook` should call pungi:setup-jedi instead
+  of existing code, or instead of `jedi:setup`.
+
+- Add variable `pungi-prefer-buildout`, defaulted to true, for
+  handling the case when a buildout is detected and a virtualenv is
+  active.
+
+0.9.7 (2014-12-14)
+==================
+- Various bug fixes.
+
 0.9.6 (2014-12-14)
 ==================
 - Depend on pyvenv for better/saner virtualenv support.
@@ -36,7 +52,7 @@ Changelog
 ================
  - Fix a bug with the formatting of jedi:server-args when omlette detected.
 
-0.7 (2014-05-30)
+ 0.7 (2014-05-30)h
 ================
  - jedi:server-args was set to the wrong thing when omelette detected.
 
