@@ -45,6 +45,7 @@
 (defvar pungi-prefer-buildout t
   "Whether pungi should prefer buildout over virtualenv when both are detected." )
 
+;;;###autoload
 (defun pungi:setup-jedi ()
   "Integrate with jedi."
   (pungi--set-jedi-paths-for-detected-environment)
