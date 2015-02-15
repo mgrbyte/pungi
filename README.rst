@@ -8,7 +8,7 @@ package with jedi_ for ease of developing Python code with Emacs_.
 When working within a virtualenv, ``pungi:setup-jedi`` configures the
 ``python`` modes' ``python-shell-virtualenv-path`` to be the current
 virtualenv, and when a buildout is detected via the presence of an
-`omelette' part, sets ``python-shell-extra-pythonpaths``, which
+``omelette`` part, sets ``python-shell-extra-pythonpaths`` , which
 enables jedi commands ``jedi:complete``, ``jedi:goto-definition`` and
 ``jedi:doc`` operate on the correct source files.
 
@@ -47,8 +47,8 @@ In all cases, call ``pungi:setup-jedi`` within a ``python-mode-hook``
 Manual testing:
 
 When visiting a python buffer, move the cursor over a symbol and check
-that invoking M-x ``jedi:goto-definition`` (Usually bound to the
-key``M-.``) opens a new buffer showing the source of that python
+that invoking ``M-x jedi:goto-definition`` (Usually bound to the
+key ``M-.``) opens a new buffer showing the source of that python
 symbol.
 
 
