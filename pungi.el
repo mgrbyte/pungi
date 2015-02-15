@@ -19,7 +19,7 @@
 
 ;; You should have received a copy of the GNU General Public License
 ;; along with this program.  If not, see <http://www.gnu.org/licenses/>.
-;;
+
 ;;; Commentary:
 ;; If not using ELPA (i.e list-packages), then add the following to
 ;; your init.el/.emacs:
@@ -28,13 +28,11 @@
 ;;
 ;; Using ELPA (When installed from `list-packages'):
 ;; (require 'pungi)
-;;
-;; In all cases, call `pungi:setup-jedi' within a `python-mode-hook':
-;;
 ;; (add-hook #'python-mode-hook
 ;;           '(lambda ()
 ;;              (pungi:setup-jedi)))
 ;;
+;; Verification that everything is setup correctly:
 ;; When visiting a python buffer, move the cursor over a symbol
 ;; and check that invoking M-x `jedi:goto-definition' opens a
 ;; new buffer showing the source of that python symbol.
@@ -44,27 +42,18 @@
 (require 'pyvenv)
 (require 'jedi)
 
-
-(defvar pungi-setup-jedi t
-  "Whether pungi should setup jedi.
-Enables jedi to run with a specific sys.path when in a virtual environment.")
-
 (defvar pungi-prefer-buildout t
   "Whether pungi should prefer buildout over virtualenv when both are detected." )
 
-(defvar pungi-additional-paths nil
-  "Addtional paths that will be set independantly of the environment detected.")
-
 (defun pungi:setup-jedi ()
-  "Setup jedi if it is installed."
+  "Integrate with jedi."
   (pungi--set-jedi-paths-for-detected-environment)
   (jedi:setup))
 
-(defun pungi--python-mode-hook ()
-  "Hook to setup pungi when `python-mode` is active."
-  (add-hook 'python-mode 'pungi--setup-jedi-maybe nil t))
-
-(add-hook 'python-mode-hook 'pungi--python-mode-hook)
+(defun pungi:configure-python-mode-hook ()
+  "Hook to setup pungi when `python-mode' is active."
+  (if pungi-setup-jedi
+      (add-hook #'python-mode #'pungi:setup-jedi nil t)))
 
 (defun pungi--set-jedi-paths-for-detected-environment ()
   "Set `jedi:server-args' for the detected environment."
@@ -76,7 +65,7 @@ Enables jedi to run with a specific sys.path when in a virtual environment.")
 	(setq python-shell-virtualenv-path venv))))
 
 (defun pungi--find-directory-container-from-path (directory path)
-  "Find a DIRECTORY located in a subdirectory of given PATH."
+  "Find a DIRECTORY located within a subdirectory of the given PATH."
   (let ((buffer-dir (file-name-directory path)))
     (while (and (not (file-exists-p
                       (concat buffer-dir directory)))
@@ -96,8 +85,8 @@ which is a hierarchy of symlinks,
 generated from the python eggs specified by the buildout configuration."
   (let ((parent-dir (pungi--find-directory-container-from-path "omelette" path)))
     (if (not parent-dir)
-        (setq parent-dir
-              (concat (pungi--find-directory-container-from-path "parts" path) "parts/")))
+	(let* ((prefix (pungi--find-directory-container-from-path "parts" path)))
+	  (setq parent-dir (concat prefix "parts/"))))
     (concat parent-dir "omelette")))
 
 (provide 'pungi)

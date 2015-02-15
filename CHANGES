@@ -2,6 +2,13 @@
 Changelog
 =========
 
+0.9.9 (2015-02-15)
+==================
+- Improve and correct documentation, in particular documenting
+  change in configuration:
+  Now require (pungi:setup-jedi) to invoked from within a python-mode hook.
+- Remove unused variables.
+
 0.9.8 (2015-02-14)
 ==================
 - Instead of copying jedi:setup, set the python mode variables

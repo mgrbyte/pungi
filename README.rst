@@ -1,6 +1,6 @@
-=================================================================================
-pungi - A Python developement tool to Integrate Jedi with virtualenv and buildout
-=================================================================================
+================================================================================
+pungi - A Python development tool to Integrate Jedi with virtualenv and buildout
+================================================================================
 
 The primary purpose of this package is to integrate the Emacs24 builtin python-mode_
 package with jedi_ for ease of developing Python code with Emacs_.
@@ -16,7 +16,7 @@ enables jedi commands ``jedi:complete``, ``jedi:goto-definition`` and
 
     https://gist.github.com/nyergler/6100112
 
-For the curious, the name ``pungi`` is the indian name for a ``snake charmer``.
+For the curious, the name ``pungi`` is the Indian name for a ``snake charmer``.
 
 Installation
 ============
