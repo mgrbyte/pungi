@@ -3,7 +3,7 @@
 ;; Copyright (C) 2014  Matthew Russell
 
 ;; Author: Matthew Russell <matthew.russell@horizon5.org>
-;; Version: 1.0
+;; Version: 1.1
 ;; Keywords: convenience
 ;; Package-Requires: ((jedi "0.2.0alpha2") (pyvenv "1.5"))
 
