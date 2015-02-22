@@ -3,7 +3,7 @@
 ;; Copyright (C) 2014  Matthew Russell
 
 ;; Author: Matthew Russell <matthew.russell@horizon5.org>
-;; Version: 0.9.9
+;; Version: 1.0
 ;; Keywords: convenience
 ;; Package-Requires: ((jedi "0.2.0alpha2") (pyvenv "1.5"))
 
@@ -51,19 +51,14 @@
   (pungi--set-jedi-paths-for-detected-environment)
   (jedi:setup))
 
-(defun pungi:configure-python-mode-hook ()
-  "Hook to setup pungi when `python-mode' is active."
-  (if pungi-setup-jedi
-      (add-hook #'python-mode #'pungi:setup-jedi nil t)))
-
 (defun pungi--set-jedi-paths-for-detected-environment ()
   "Set `jedi:server-args' for the detected environment."
   (let* ((venv pyvenv-virtual-env)
 	 (omelette (pungi--detect-buffer-omelette buffer-file-name)))
-    (when omelette
-      (setq python-shell-extra-pythonpaths (list omelette)))
-    (if (and venv omelette omelette (not pungi-prefer-buildout))
-	(setq python-shell-virtualenv-path venv))))
+    (if venv
+	(setq python-shell-virtualenv-path venv))
+    (if (and omelette (file-exists-p omelette))
+	(setq python-shell-extra-pythonpaths (list omelette)))))
 
 (defun pungi--find-directory-container-from-path (directory path)
   "Find a DIRECTORY located within a subdirectory of the given PATH."
