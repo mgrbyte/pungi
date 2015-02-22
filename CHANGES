@@ -2,6 +2,16 @@
 Changelog
 =========
 
+1.1 (2015-02-22)
+================
+- Remove redundant variable `pungi-prefer-buildout`.
+  
+1.0 (2015-02-22)
+================
+- Check for existance of omlette directory before setting it as
+  to `python-shell-extra-pythonpaths`
+- Removed unused function. 
+	
 0.9.9 (2015-02-15)
 ==================
 - Improve and correct documentation, in particular documenting
