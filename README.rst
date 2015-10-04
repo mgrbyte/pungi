@@ -1,9 +1,8 @@
+.. image:: http://melpa.org/packages/pungi-badge.svg
+           :target: MELPA_
 ================================================================================
 pungi - A Python development tool to Integrate Jedi with virtualenv and buildout
 ================================================================================
-.. image:: http://melpa.org/packages/pungi-badge.svg
-           :target: MELPA_
-
 The primary purpose of this package is to integrate the Emacs24 builtin python-mode_
 package with jedi_ for ease of developing Python code with Emacs_.
 
